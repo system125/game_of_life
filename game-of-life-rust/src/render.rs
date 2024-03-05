@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 use web_sys::CanvasRenderingContext2d;
 
 
-use crate::consts::{CELL_SIZE, STROKE_COLOR};
+use crate::consts::{ALIVE_COLOR, CELL_SIZE, DEAD_COLOR, STROKE_COLOR};
 /**
  * Module to help render game of life board
  **/
@@ -29,4 +29,27 @@ use crate::consts::{CELL_SIZE, STROKE_COLOR};
         context.move_to(0.0, start_y.into());
         context.line_to(end_x, start_y);
     }
+    context.stroke();
+ }
+
+ pub fn render_cells(context:&CanvasRenderingContext2d,uni:&Universe){
+    context.begin_path();
+
+    for row in 0..uni.height(){
+        for col in 0..uni.width(){
+            
+            let cell_style = match uni.get_cell_at(row, col) {
+                crate::universe::Cell::Dead =>DEAD_COLOR,
+                crate::universe::Cell::Alive => ALIVE_COLOR,
+            };
+
+          context.set_fill_style(&JsValue::from_str(cell_style));
+        
+          let rect_width = (col * (CELL_SIZE + 1) + 1) as f64;
+          let rect_height = (row * (CELL_SIZE + 1) + 1) as f64;
+          let cell_size = CELL_SIZE as f64;
+         context.fill_rect(rect_width, rect_height, cell_size, cell_size);
+        }
+    }
+    context.stroke();
  }

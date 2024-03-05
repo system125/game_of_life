@@ -10,7 +10,7 @@ use wasm_bindgen::prelude::*;
 use web_sys::{CanvasRenderingContext2d, Document};
 
 
-use crate::{render::render_grid, universe::Universe};
+use crate::{render::{render_cells, render_grid}, universe::Universe};
 use std::{cell, f64, panic};
 
 
@@ -96,8 +96,6 @@ impl Universe_Runner{
         //     .arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
         //     .unwrap();
         render_grid(context, &self.universe);
-
-        context.stroke();
-    
+        render_cells(context, &self.universe);
     }
 }

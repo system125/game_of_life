@@ -27,8 +27,14 @@ impl Universe{
      * Map 
     */
 
-    pub fn get_index(&self,row:u32,col:u32) -> usize {
+    fn get_index(&self,row:u32,col:u32) -> usize {
         (row*self.width + col) as usize         
+    }
+
+    pub fn get_cell_at (&self,row:u32,col:u32) -> Cell{
+        let id = self.get_index(row, col);
+
+        self.cells[id]
     }
 
     pub fn New_alive_at_2_or_7_divisible () -> Universe {
