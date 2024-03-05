@@ -1,13 +1,17 @@
 
+mod universe;
+mod render;
+mod utils;
+mod consts;
+
+use consts::CELL_SIZE;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 use web_sys::{CanvasRenderingContext2d, Document};
-pub mod universe;
-pub mod render;
-pub mod utils;
 
-use crate::universe::Universe;
-use std::{f64, panic};
+
+use crate::{render::render_grid, universe::Universe};
+use std::{cell, f64, panic};
 
 
 
@@ -33,13 +37,23 @@ macro_rules! console_log {
 }
 
 
-pub fn getCanvasContext () -> CanvasRenderingContext2d {
+/**
+ * Initializes canvas with width 5 and returns context for this canvas
+ */
+pub fn getCanvasContext (width:u32,height:u32) -> CanvasRenderingContext2d {
     let document = web_sys::window().unwrap().document().unwrap();
+    
     let canvas = document.get_element_by_id("game-of-life-canvas").unwrap();
     let canvas: web_sys::HtmlCanvasElement = canvas
         .dyn_into::<web_sys::HtmlCanvasElement>()
         .map_err(|_| ())
         .unwrap();
+
+
+    let canvas_height =((CELL_SIZE + 1) * height + 1) as u32;
+    let canvas_Width = ((CELL_SIZE+1)*width + 1) as u32;
+    canvas.set_height(canvas_height);
+    canvas.set_width(canvas_Width);
 
      canvas
         .get_context("2d")
@@ -64,7 +78,7 @@ impl Universe_Runner{
         console_log!("Creating Universe!");
         let universe = Universe::New_alive_at_2_or_7_divisible();
         console_log!("Creating context!");
-        let context = getCanvasContext();
+        let context = getCanvasContext(universe.width(),universe.height());
 
         Universe_Runner {
             universe: universe,
@@ -78,9 +92,10 @@ impl Universe_Runner{
         context.set_stroke_style(&JsValue::from_str("#ffffff"));
 
         // Draw the outer circle.
-        context
-            .arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
-            .unwrap();
+        // context
+        //     .arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
+        //     .unwrap();
+        render_grid(context, &self.universe);
 
         context.stroke();
     
