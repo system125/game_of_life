@@ -9,3 +9,4 @@ import * as wasm from "game-of-life-rust/game_of_life_rust"
 // console.log(`Factorial of ${fact.input()} is ${fact.output()}`)
 
 let unit = wasm.Universe_Runner.init();
+unit.render();
